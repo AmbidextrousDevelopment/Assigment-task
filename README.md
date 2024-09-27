@@ -1,5 +1,7 @@
 # Vehicle Telemetry System
 
+## Project folder: Assets/Project  
+
 ## Overview
 
 The Vehicle Telemetry System is a Unity-based project designed to monitor and display real-time vehicle metrics, including speed, engine RPM, gear position, transmission mode, and proximity to nearby vehicles. The system leverages the Vehicle Physics Pro (VPP) package to provide accurate vehicular data and enhances gameplay through a comprehensive HUD.
