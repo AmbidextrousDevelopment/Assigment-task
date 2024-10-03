@@ -26,37 +26,60 @@ public class VehicleTelemetryManager : MonoBehaviour
     public static float maxProximityDistance = 20f; //min distance, where Proximity starts calculating
     private GameObject nearestCar; //nearest car to Player for Proximity
 
-    private void CalculateProximity() //method to calculate Proximity 
+    [Header("Front Bumper Points")]
+    [SerializeField] private Transform leftBumper;  // Empty object on left bumper part
+    [SerializeField] private Transform rightBumper; // Empty object on right bumper part
+
+    private void CalculateProximity()
     {
-        float nearestDistance = maxProximityDistance;
+        RaycastHit hitLeft, hitRight;
         nearestCar = null;
+        float nearestDistance = maxProximityDistance;
 
-        foreach (var otherCar in otherVehicles)
+        Debug.DrawRay(leftBumper.position, leftBumper.forward * maxProximityDistance, Color.green);  
+        Debug.DrawRay(rightBumper.position, rightBumper.forward * maxProximityDistance, Color.green); 
+
+       
+        bool hitFromLeft = Physics.Raycast(leftBumper.position, leftBumper.forward, out hitLeft, maxProximityDistance);
+
+        
+        bool hitFromRight = Physics.Raycast(rightBumper.position, rightBumper.forward, out hitRight, maxProximityDistance);
+
+        // Перевіряємо, чи один з променів влучив у коллайдер іншого автомобіля
+        if (hitFromLeft || hitFromRight)
         {
-            if (otherCar != null && otherCar != vehicle)
+            foreach (var otherCar in otherVehicles)
             {
-                float distance = Vector3.Distance(vehicle.transform.position, otherCar.transform.position);
-
-                // Check if the car is within the player's field of view (front half of the vehicle)
-                Vector3 directionToCar = (otherCar.transform.position - vehicle.transform.position).normalized;
-                float angle = Vector3.Angle(vehicle.transform.forward, directionToCar);
-
-                if (distance < nearestDistance && angle < 90)  // 90 degrees is the front field of view
+                if (hitFromLeft && hitLeft.collider != null && hitLeft.collider.transform == otherCar.transform)
                 {
-                    nearestDistance = distance;
-                    nearestCar = otherCar;
+                    float distance = hitLeft.distance;
+                    if (distance < nearestDistance)
+                    {
+                        nearestDistance = distance;
+                        nearestCar = otherCar;
+                    }
+                }
+
+                if (hitFromRight && hitRight.collider != null && hitRight.collider.transform == otherCar.transform)
+                {
+                    float distance = hitRight.distance;
+                    if (distance < nearestDistance)
+                    {
+                        nearestDistance = distance;
+                        nearestCar = otherCar;
+                    }
                 }
             }
         }
 
-        // Update proximity only if a car was found
+        //  proximity Update
         if (nearestCar != null)
         {
             proximity = nearestDistance;
         }
         else
         {
-            proximity = maxProximityDistance + 1; // Set to higher than max to indicate no car in proximity
+            proximity = maxProximityDistance + 1; // Якщо не знайдено жодного автомобіля попереду
         }
     }
     #endregion
@@ -104,7 +127,7 @@ public class VehicleTelemetryManager : MonoBehaviour
         vehicleSpeed = vehicle.speed * 3.6f; //Could be also line below, but as I tested, they are similar
         //vehicleSpeed = (vehicle.data.Get(Channel.Vehicle, VehicleData.Speed) / 1000.0f) *3.6f;
 
-        engineRPM = (vehicle.data.Get(Channel.Vehicle, VehicleData.EngineRpm) / 100000.0f); //engine RPM value
+        engineRPM = (vehicle.data.Get(Channel.Vehicle, VehicleData.EngineRpm) / 1000.0f); //engine RPM value
     }
     #endregion
 }
