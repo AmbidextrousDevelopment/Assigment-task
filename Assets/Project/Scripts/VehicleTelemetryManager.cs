@@ -45,7 +45,7 @@ public class VehicleTelemetryManager : MonoBehaviour
         
         bool hitFromRight = Physics.Raycast(rightBumper.position, rightBumper.forward, out hitRight, maxProximityDistance);
 
-        // Перевіряємо, чи один з променів влучив у коллайдер іншого автомобіля
+
         if (hitFromLeft || hitFromRight)
         {
             foreach (var otherCar in otherVehicles)
