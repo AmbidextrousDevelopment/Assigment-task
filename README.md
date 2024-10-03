@@ -1,6 +1,7 @@
 # Vehicle Telemetry System
 
 ##NEWEST FIX
+
 -Fixed CalculateProximity() method
 -Added Raycast lines to car's bumber, to see more accurate Proximity, and Distance
 -Fixed engineRPM value
